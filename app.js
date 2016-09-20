@@ -4,37 +4,52 @@
 
 	.controller('LunchCheckController', LunchCheckController);
 
+
 	LunchCheckController.$inject = ['$scope'];
 
 	function LunchCheckController($scope){
 		$scope.name = "";
 		$scope.result = "";
-		var comma = ',';
 
 		$scope.calculate = function(name){
+			
+			var splitedEntry, checkEntry;
+			var seperator = ',';
+			
 			// Check for an empty string
-			var splitedString;
-
 			if(!name){
 				$scope.result = "Please enter data first";
-			} else if(!isNaN(name)){
-				$scope.result = "Please do not use numbers :)";
 			} else {
-				console.log(name);
-				splitedString = splitString(name, comma);	
-				$scope.result = countLunchMeals(splitedString);
+				splitedEntry = splitUserEntry(name, seperator);
+				checkEntry = checkUserEntry(splitedEntry);	
 			}
-			console.log($scope.result);
+
+			if(checkEntry){
+				$scope.result = countIfTooMuch(checkEntry);
+			}
+			
 		}
 
-		function splitString(stringToSplit, seperator){
+		function splitUserEntry(stringToSplit, seperator){
 			return stringToSplit.split(seperator);
 		}
+	
+		function checkUserEntry(array){
+			for(var i = 0; i < array.length; i++){
+				// check if there is at least one character with non whitespace
+				if(!/\S/.test(array[i])){
+					console.log("Empty string is removed");
+					array.splice(i, 1);
+				}
+			}
+			return array;
 
-		function countLunchMeals(arrayOfMeals){
-			if(arrayOfMeals.length <= 3){
+		}
+
+		function countIfTooMuch(array){
+			if(array.length <= 3){
 				return "Enjoy!";
-			} else if(arrayOfMeals.length > 3){
+			} else if(array.length > 3){
 				return "Too much!";
 			} 
 		}
